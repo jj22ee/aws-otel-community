@@ -58,7 +58,6 @@ public class AppController {
       @RequestHeader("service_name") String name,
       @RequestHeader("required") String required,
       @RequestHeader("totalSpans") String totalSpans) {
-
     Attributes attributes =
         Attributes.of(
             AttributeKey.stringKey("http.method"), "GET",
@@ -107,9 +106,9 @@ public class AppController {
         Attributes.of(
             AttributeKey.stringKey("http.method"), "GET",
             AttributeKey.stringKey("http.url"), "http://localhost:8080/importantEndpoint",
+            AttributeKey.stringKey("user"), userAttribute,
             AttributeKey.stringKey("http.route"), "/importantEndpoint",
             AttributeKey.stringKey("required"), required,
-            AttributeKey.stringKey("user"), userAttribute,
             AttributeKey.stringKey("http.target"), "/importantEndpoint");
     return getSampledSpanCount(name, totalSpans, attributes);
   }
