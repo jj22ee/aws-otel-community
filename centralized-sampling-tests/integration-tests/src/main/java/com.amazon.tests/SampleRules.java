@@ -4,14 +4,16 @@ import org.json.simple.JSONObject;
 
 /** File that contains all sample Rules that will be created to be used for testing */
 public class SampleRules {
+  private final SampleRule[] sampleNone;
   private final SampleRule[] sampleRules;
   private final SampleRule[] priorityRules;
   private final SampleRule[] reservoirRules;
 
   public SampleRules() {
+    this.sampleNone = new SampleRule[] {getSampleNone(), getSampleNoneAtEndpoint()};
+
     this.sampleRules =
         new SampleRule[] {
-          getSampleNone(),
           getAcceptAll(),
           getImportantRule(),
           getImportantAttribute(),
@@ -20,16 +22,15 @@ public class SampleRules {
           getMethodRule(),
           getMultipleAttribute(),
           getDefaultRule(),
-          getServiceNameRule(),
-          getSampleNoneAtEndpoint()
+          getServiceNameRule()
         };
+
     this.priorityRules =
         new SampleRule[] {
           getImportantRule(),
           getImportantAttribute(),
           getAttributeatEndpoint(),
-          getMethodRule(),
-          getServiceNameRule()
+          getMethodRule()
         };
 
     this.reservoirRules = new SampleRule[] {getHighReservoirLowRate(), getMixedReservoir()};
@@ -191,8 +192,17 @@ public class SampleRules {
   private SampleRule getServiceNameRule() {
     return new SampleRule.SampleRuleBuilder(
             GenericConstants.SampleRuleName.ImportantServiceName, 3, 1, 1)
-        .setServiceName("ImportantServiceName")
+        .setServiceName("aws-otel-integ-test")
         .build();
+  }
+
+  /**
+   * get all sample rules to test individually except for reservoir rules
+   *
+   * @return list of SampleRules
+   */
+  public SampleRule[] getSampleNoneRules() {
+    return this.sampleNone;
   }
 
   /**
