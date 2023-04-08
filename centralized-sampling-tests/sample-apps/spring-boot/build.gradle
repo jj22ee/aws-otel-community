@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-	api(platform("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha:1.23.0-alpha"))
+	api(platform("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha:1.24.0-alpha"))
 
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter")
@@ -22,7 +22,6 @@ dependencies {
 	implementation("io.opentelemetry.contrib:opentelemetry-aws-xray:1.24.0")
 	implementation("io.opentelemetry:opentelemetry-extension-aws")
 	implementation("io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2")
-	implementation("io.opentelemetry:opentelemetry-exporter-otlp")
 }
 
 application {

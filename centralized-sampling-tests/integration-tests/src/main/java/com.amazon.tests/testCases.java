@@ -27,8 +27,8 @@ public class testCases {
           getMultAttributesPostSampled(),
           getMultAttributesImportantEndpoint(),
           getPostOnly(),
-        //   getServiceNameTest(),
-        //   getAdminServiceNameTest()
+          getServiceNameTest(),
+          getAdminServiceNameTest()
         };
   }
 
