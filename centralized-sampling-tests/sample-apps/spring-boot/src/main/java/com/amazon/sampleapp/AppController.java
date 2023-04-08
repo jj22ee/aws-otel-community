@@ -6,10 +6,7 @@ import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
-import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import io.opentelemetry.contrib.awsxray.AwsXrayRemoteSampler;
-import io.opentelemetry.contrib.awsxray.AwsXrayIdGenerator;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
@@ -46,9 +43,6 @@ public class AppController {
         OpenTelemetrySdk.builder()
             .setTracerProvider(
                 SdkTracerProvider.builder()
-                    .addSpanProcessor(
-                        BatchSpanProcessor.builder(OtlpGrpcSpanExporter.getDefault()).build())
-                    .setIdGenerator(AwsXrayIdGenerator.getInstance())
                     .setResource(resource)
                     .setSampler(
                         AwsXrayRemoteSampler.newBuilder(resource)
