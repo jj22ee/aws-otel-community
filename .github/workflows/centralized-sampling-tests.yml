@@ -43,7 +43,7 @@ jobs:
         run: ./gradlew :integration-tests:build
         working-directory: centralized-sampling-tests
       - name: Run test containers
-        run: docker-compose -f docker-compose-integration-tests.yml -f docker-compose-java-app.yml up --abort-on-container-exit --build
+        run: docker-compose -f docker-compose-integration-tests.yml -f docker-compose-java-app.yml up --abort-on-container-exit
         working-directory: centralized-sampling-tests
         env:
           INSTANCE_ID: ${{ github.run_id }}-${{ github.run_number }}
@@ -73,7 +73,7 @@ jobs:
         run: ./gradlew :integration-tests:build
         working-directory: centralized-sampling-tests
       - name: Run test containers
-        run: docker-compose -f docker-compose-integration-tests.yml -f docker-compose-golang-app.yml up --abort-on-container-exit --build
+        run: docker-compose -f docker-compose-integration-tests.yml -f docker-compose-golang-app.yml up --abort-on-container-exit
         working-directory: centralized-sampling-tests
         env:
           INSTANCE_ID: ${{ github.run_id }}-${{ github.run_number }}

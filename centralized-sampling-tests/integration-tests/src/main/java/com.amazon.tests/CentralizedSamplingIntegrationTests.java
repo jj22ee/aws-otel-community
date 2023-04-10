@@ -50,7 +50,6 @@ public class CentralizedSamplingIntegrationTests {
      */
     public static void main(String[] args) throws IOException, InterruptedException {
         deleteAllRules();
-        sampleNoneTests();
         sampleRulesTests();
         reservoirTests();
         priorityTests();
@@ -67,7 +66,6 @@ public class CentralizedSamplingIntegrationTests {
     public static boolean makeCalls(testCase testCase, SampleRule sampleRule) throws IOException {
         RequestBody reqbody = null;
         String stringResp = "";
-        Integer totalCalls = GenericConstants.TOTAL_CALLS;
         if (testCase.getMethod().equals("POST")) {
             reqbody = RequestBody.create(null, new byte[0]);
         }
@@ -83,7 +81,7 @@ public class CentralizedSamplingIntegrationTests {
                                              .addHeader(GenericConstants.SERVICE_NAME, testCase.getName())
                                              .addHeader(GenericConstants.REQUIRED, testCase.getRequired())
                                              .addHeader(
-                                                     GenericConstants.TOTAL_SPANS, String.valueOf(totalCalls))
+                                                     GenericConstants.TOTAL_SPANS, String.valueOf(GenericConstants.TOTAL_CALLS))
                                              .url(host + testCase.getEndpoint())
                                              .method(testCase.getMethod(), reqbody)
                                              .build())
@@ -270,16 +268,14 @@ public class CentralizedSamplingIntegrationTests {
             }
 
             logger.info("Making dummy calls to update quota");
-            makeDummyCalls(testCasesObj.getDefaultUser(), sampleRule);
-            TimeUnit.SECONDS.sleep(GenericConstants.WAIT_FOR_RESERVOIR);
-            makeDummyCalls(testCasesObj.getDefaultUser(), sampleRule);
-            TimeUnit.SECONDS.sleep(GenericConstants.WAIT_FOR_RESERVOIR);
-            makeDummyCalls(testCasesObj.getDefaultUser(), sampleRule);
-            TimeUnit.SECONDS.sleep(GenericConstants.WAIT_FOR_RESERVOIR);
+            for (int i = 0; i < 3; i++) {
+                makeDummyCalls(testCasesObj.getDefaultUser(), sampleRule);
+                TimeUnit.SECONDS.sleep(GenericConstants.WAIT_FOR_RESERVOIR);
+            }
             logger.info("Ended dummy calls to update quota");
             
             boolean passed = false;
-            for (int j = 0; j < GenericConstants.MAX_RETRIES + 1; j++) {
+            for (int j = 0; j < GenericConstants.MAX_RETRIES; j++) {
                 try {
                     passed = makeCalls(testCasesObj.getDefaultUser(), sampleRule);
                 } catch (Exception e) {
@@ -287,7 +283,7 @@ public class CentralizedSamplingIntegrationTests {
                 } finally {
                     if (passed) {
                         break;
-                    } else if (j < GenericConstants.MAX_RETRIES - 1 + 1) {
+                    } else if (j < GenericConstants.MAX_RETRIES - 1) {
                         logger.warn("Test failed, attempting retry");
                         TimeUnit.SECONDS.sleep(GenericConstants.RETRY_WAIT);
                     } else {
@@ -392,62 +388,6 @@ public class CentralizedSamplingIntegrationTests {
                 throw new IOException();
             }
             TimeUnit.SECONDS.sleep(GenericConstants.RETRY_WAIT);
-            for (testCase allTestCase : allTestCases) {
-                boolean passed = false;
-                for (int k = 0; k < GenericConstants.MAX_RETRIES; k++) {
-                    try {
-                        passed = makeCalls(allTestCase, sampleRule);
-                    } catch (Exception e) {
-                        logger.error("Could not fetch endpoint, sample app might not be started");
-                    } finally {
-                        if (passed) {
-                            break;
-                        } else if (k < GenericConstants.MAX_RETRIES - 1) {
-                            logger.warn("Test failed here, attempting retry");
-                        }
-                        TimeUnit.SECONDS.sleep(GenericConstants.RETRY_WAIT);
-                    }
-                }
-                if (!passed) {
-                    logger.error(
-                            "Test failed for Sample rule: "
-                                    + sampleRule.getName().getSampleName()
-                                    + " and test case "
-                                    + allTestCase.getName());
-                    deleteRule(sampleRule.getName().getSampleName());
-                    throw new InterruptedException();
-                } else {
-                    logger.info(
-                            "Test passed for Sample rule: "
-                                    + sampleRule.getName().getSampleName()
-                                    + " and test case "
-                                    + allTestCase.getName());
-                }
-            }
-            deleteRule(sampleRule.getName().getSampleName());
-        }
-    }
-
-    /**
-     * Runs tests for each sample Rule individually. Creates a sample rule, waits 1s for rule to be
-     * applied, verifies the expected sampling rate matches the expected rate for the testCase, then
-     * deletes the rule. Repeats this for all sample rules
-     *
-     * @throws IOException          if unable to connect to xray backend
-     * @throws InterruptedException if tests fail
-     */
-    public static void sampleNoneTests() throws IOException, InterruptedException {
-        SampleRule[] sampleRules = sampleRulesObj.getSampleNoneRules();
-        testCase[] allTestCases = testCasesObj.getAllTestCases();
-
-        for (SampleRule sampleRule : sampleRules) {
-            try {
-                makeRule(sampleRule.getJson(), sampleRule.getName().getSampleName());
-            } catch (IOException exception) {
-                logger.error("Could not fetch endpoint, XRay backend might not be running");
-                throw new IOException();
-            }
-
             for (testCase allTestCase : allTestCases) {
                 boolean passed = false;
                 for (int k = 0; k < GenericConstants.MAX_RETRIES; k++) {

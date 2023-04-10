@@ -139,7 +139,7 @@ public class testCases {
    *
    * @return testCases adminPost user
    */
-  public testCase getAdminImportantEndpoint() {
+  private testCase getAdminImportantEndpoint() {
     List<GenericConstants.SampleRuleName> matches =
         getMatches(
             new ArrayList<>(
