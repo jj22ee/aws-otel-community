@@ -97,7 +97,7 @@ func webServer() {
 		if err != nil {
 			log.Println(err)
 		}
-		
+
 		_, err = w.Write([]byte(strconv.Itoa(totalSampled)))
 		if err != nil {
 			log.Println(err)
