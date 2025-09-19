@@ -1,0 +1,14 @@
+boto3
+certifi
+chardet
+Flask
+idna
+requests
+urllib3
+Werkzeug==3.0.1
+flask-sqlalchemy==2.5.1
+SQLAlchemy==1.4
+# aws_xray_sdk==2.6.0
+# opentelemetry-api
+# opentelemetry-sdk
+./opentelemetry_sdk_extension_aws-2.2.0.dev0-py3-none-any.whl
